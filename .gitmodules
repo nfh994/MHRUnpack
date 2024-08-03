@@ -1,0 +1,3 @@
+[submodule "MHRPakDecrypt"]
+	path = MHRPakDecrypt
+	url = https://github.com/Andoryuuta/MHRPakDecrypt.git
