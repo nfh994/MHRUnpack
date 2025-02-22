@@ -1,0 +1,282 @@
+﻿<Window
+    x:Class="MHRUnpack.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="clr-namespace:MHRUnpack.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:extensions="clr-namespace:MHRUnpack.Extensions"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:lex="http://wpflocalizeextension.codeplex.com"
+    xmlns:local="clr-namespace:MHRUnpack"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:MHRUnpack.Properties"
+    xmlns:viewmodels="clr-namespace:MHRUnpack.ViewModels"
+    Title="{Binding Title}"
+    Width="1280"
+    Height="720"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+    lex:LocalizeDictionary.DesignCulture="en"
+    lex:ResxLocalizationProvider.DefaultAssembly="MHRUnpack"
+    lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+    Topmost="{Binding Topmost}"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <!--#region 退出确认-->
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <i:InvokeCommandAction Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <!--#endregion-->
+    <!--#region 自定义标题-->
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="36" />
+    </WindowChrome.WindowChrome>
+    <!--#endregion-->
+
+    <Grid>
+        <!--#region 布局定义-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36" />
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <!--#endregion-->
+
+        <!--#region 标题-->
+        <Grid>
+            <!--#region 布局定义-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <!--#endregion-->
+
+            <!--#region 资源定义-->
+            <Grid.Resources>
+                <Style BasedOn="{StaticResource MaterialDesignIconButton}" TargetType="Button">
+                    <Setter Property="Width" Value="32" />
+                    <Setter Property="Height" Value="32" />
+                </Style>
+            </Grid.Resources>
+            <!--#endregion-->
+
+            <!--#region 窗口标题-->
+            <StackPanel Margin="2" Orientation="Horizontal">
+                <!--<Label VerticalContentAlignment="Center" Content="{I18N {x:Static properties:LangKeys.标题}}" />-->
+                <!--<Label VerticalContentAlignment="Center" Content="{lex:Loc 标题}" />-->
+                <Label VerticalContentAlignment="Center" Content="{Binding Title}" />
+            </StackPanel>
+            <!--#endregion-->
+            <!--#region 语言-->
+
+            <!--#endregion-->
+            <!--#region 固有按钮-->
+            <StackPanel
+                Grid.Column="1"
+                Orientation="Horizontal"
+                WindowChrome.IsHitTestVisibleInChrome="True">
+                <!--  materialDesign:HintAssist.Hint="{lex:Loc 语言}"  -->
+                <!--  materialDesign:HintAssist.Hint="{I18N {x:Static properties:LangKeys.语言}}"  -->
+                <ComboBox
+                    Margin="5"
+                    materialDesign:HintAssist.Hint="{lex:Loc 语言}"
+                    materialDesign:HintAssist.IsFloating="True"
+                    ItemsSource="{extensions:EnumBindingSource EnumType=viewmodels:Lang}"
+                    SelectedValue="{Binding Language}" />
+                <ToggleButton
+                    Content="&#xE718;"
+                    FontFamily="Segoe MDL2 Assets"
+                    IsChecked="{Binding Topmost}"
+                    ToolTip="置顶" />
+                <Button
+                    Content="&#xE921;"
+                    FontFamily="Segoe MDL2 Assets"
+                    ToolTip="最小化">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:ChangePropertyAction
+                                PropertyName="WindowState"
+                                TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
+                                Value="1" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button
+                    Content="&#xE8BB;"
+                    FontFamily="Segoe MDL2 Assets"
+                    ToolTip="关闭">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Click">
+                            <i:CallMethodAction MethodName="Close" TargetObject="{Binding RelativeSource={RelativeSource AncestorType=Window}}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+            </StackPanel>
+            <!--#endregion-->
+
+        </Grid>
+        <!--#endregion-->
+
+        <!--#region 内容-->
+        <Grid Grid.Row="1">
+            <!--#region 分割线定义-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <!--#endregion-->
+            <materialDesign:Card Margin="5">
+                <!--<TreeView
+                Grid.Column="0"
+                ItemsSource="{Binding Items}"
+                SelectedItemChanged="TreeView_SelectedItemChanged">
+                    <TreeView.ItemTemplate>
+                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
+                            <TextBlock Text="{Binding Name}" />
+                        </HierarchicalDataTemplate>
+                    </TreeView.ItemTemplate>
+                </TreeView>-->
+            </materialDesign:Card>
+            <GridSplitter
+                Grid.Column="1"
+                Width="5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="DragDelta">
+                        <i:InvokeCommandAction Command="{Binding GridSplitter_DragDeltaCommand}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+            </GridSplitter>
+            <StackPanel
+                Grid.Column="2"
+                MinWidth="250"
+                Margin="5"
+                Orientation="Vertical">
+                <materialDesign:Card Margin="5">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ComboBox
+                            Margin="5"
+                            materialDesign:HintAssist.Hint="List"
+                            materialDesign:HintAssist.IsFloating="True"
+                            ItemsSource="{Binding ListFiles}"
+                            SelectedValue="{Binding SelectedList}" />
+                        <Button
+                            Grid.Column="1"
+                            Margin="5"
+                            Command="{Binding FlushListFilesCommand}"
+                            Content="&#xE72C;"
+                            FontFamily="Segoe MDL2 Assets"
+                            ToolTip="刷新列表" />
+                    </Grid>
+                </materialDesign:Card>
+                <materialDesign:Card Margin="5">
+                    <StackPanel>
+                        <ListBox
+                            MinHeight="120"
+                            Margin="5"
+                            d:ItemsSource="{d:SampleData ItemCount=5}"
+                            ItemsSource="{Binding PakFiles}"
+                            SelectedValue="{Binding SelectedPak}" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Grid.Column="0"
+                                Margin="5"
+                                Command="{Binding SelectPakCommand}"
+                                Content="&#xE710;"
+                                FontFamily="Segoe MDL2 Assets"
+                                ToolTip="添加" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="5"
+                                Command="{Binding MoveUpCommand}"
+                                Content="&#xE74A;"
+                                FontFamily="Segoe MDL2 Assets"
+                                ToolTip="上移" />
+                            <Button
+                                Grid.Column="2"
+                                Margin="5"
+                                Command="{Binding MoveDownCommand}"
+                                Content="&#xE74B;"
+                                FontFamily="Segoe MDL2 Assets"
+                                ToolTip="下移" />
+                            <Button
+                                Grid.Column="3"
+                                Margin="5"
+                                Command="{Binding DelPakCommand}"
+                                Content="&#xE74D;"
+                                FontFamily="Segoe MDL2 Assets"
+                                ToolTip="删除" />
+                        </Grid>
+                    </StackPanel>
+                </materialDesign:Card>
+
+                <materialDesign:Card Margin="5">
+                    <StackPanel>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <CheckBox Margin="5" Content="显示未知" />
+                            <CheckBox
+                                Name="MultiThread"
+                                Grid.Column="1"
+                                Margin="5"
+                                Content="多线程"
+                                IsChecked="{Binding MultiThread}" />
+                            <TextBox
+                                Grid.Column="2"
+                                Margin="5"
+                                materialDesign:HintAssist.Hint="线程数"
+                                materialDesign:HintAssist.IsFloating="True"
+                                IsEnabled="{Binding MultiThread}"
+                                Text="{Binding ThreadCount}">
+                                <i:Interaction.Behaviors>
+                                    <behaviors:MouseWheelBehavior MaxValue="100" MinValue="1" />
+                                </i:Interaction.Behaviors>
+                            </TextBox>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox
+                                Margin="5"
+                                materialDesign:HintAssist.Hint="输出目录"
+                                materialDesign:HintAssist.IsFloating="True"
+                                Text="{Binding OutputPath}" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="5"
+                                Command="{Binding SelectOutputCommand}"
+                                Content="&#xE838;"
+                                FontFamily="Segoe MDL2 Assets"
+                                ToolTip="浏览" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" />
+                    </StackPanel>
+                </materialDesign:Card>
+            </StackPanel>
+        </Grid>
+        <!--#endregion-->
+
+    </Grid>
+</Window>
