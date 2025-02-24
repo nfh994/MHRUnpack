@@ -23,11 +23,12 @@ namespace MHRUnpack.Behaviors
             var value = MinValue;
             if (int.TryParse(AssociatedObject.Text, out value))
             {
-                if(Compare(ref value))
+                if (Compare(ref value))
                 {
                     AssociatedObject.Text = value.ToString();
                 }
-            }else
+            }
+            else
             {
                 AssociatedObject.Text = value.ToString();
             }

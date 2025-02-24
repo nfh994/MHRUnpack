@@ -13,13 +13,6 @@ namespace MHRUnpack.Utils
         private static IServiceProvider ConfigureServices()
         {
             var services = new ServiceCollection();
-            //Type type = typeof(ServiceManager);
-            //var array = GetExtensionMethods(type);
-            //foreach (var method in array)
-            //{
-            //    method.Invoke(null, [null, services]);
-            //}
-
             services.AddSingleton<MainViewModel>();
             services.AddSingleton(s => new MainWindow { DataContext = s.GetService<MainViewModel>() });
             return services.BuildServiceProvider();

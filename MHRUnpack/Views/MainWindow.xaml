@@ -19,16 +19,22 @@
     lex:LocalizeDictionary.DesignCulture="en"
     lex:ResxLocalizationProvider.DefaultAssembly="MHRUnpack"
     lex:ResxLocalizationProvider.DefaultDictionary="Resources"
+    AllowDrop="True"
     Topmost="{Binding Topmost}"
     WindowStyle="None"
     mc:Ignorable="d">
+
     <!--#region 退出确认-->
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
             <i:InvokeCommandAction Command="{Binding ClosingCommand}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
+        <i:EventTrigger EventName="Drop">
+            <i:InvokeCommandAction Command="{Binding DropCommand}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <!--#endregion-->
+
     <!--#region 自定义标题-->
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="36" />
@@ -121,6 +127,7 @@
 
         <!--#region 内容-->
         <Grid Grid.Row="1">
+
             <!--#region 分割线定义-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -128,37 +135,69 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <!--#endregion-->
+
+            <!--#region Tree-->
             <materialDesign:Card Margin="5">
-                <!--<TreeView
-                Grid.Column="0"
-                ItemsSource="{Binding Items}"
-                SelectedItemChanged="TreeView_SelectedItemChanged">
-                    <TreeView.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Children}">
-                            <TextBlock Text="{Binding Name}" />
+                <TreeView
+                    d:ItemsSource="{d:SampleData ItemCount=5}"
+                    ItemsSource="{Binding Tree}"
+                    VirtualizingStackPanel.IsVirtualizing="True">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type viewmodels:TreeModel}" ItemsSource="{Binding Children}">
+                            <StackPanel Orientation="Horizontal">
+                                <CheckBox
+                                    Content="{Binding Icon}"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    FontSize="16"
+                                    IsChecked="{Binding IsSelected}">
+                                    <CheckBox.Style>
+                                        <Style BasedOn="{StaticResource MaterialDesignCheckBox}" TargetType="CheckBox">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Icon}" Value="&#xE8B7;">
+                                                    <Setter Property="Foreground" Value="#FFEEBE50" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </CheckBox.Style>
+                                </CheckBox>
+                                <TextBlock VerticalAlignment="Center" Text="{Binding}" />
+                            </StackPanel>
                         </HierarchicalDataTemplate>
-                    </TreeView.ItemTemplate>
-                </TreeView>-->
+                    </TreeView.Resources>
+
+                    <TreeView.ItemContainerStyle>
+                        <Style BasedOn="{StaticResource MaterialDesignTreeViewItem}" TargetType="TreeViewItem">
+                            <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+                            <Setter Property="Padding" Value="4" />
+                            <Setter Property="Visibility" Value="{Binding Visibility}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
             </materialDesign:Card>
+            <!--#endregion-->
+
+            <!--#region Splitter-->
             <GridSplitter
                 Grid.Column="1"
                 Width="5"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
-
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="DragDelta">
                         <i:InvokeCommandAction Command="{Binding GridSplitter_DragDeltaCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
             </GridSplitter>
+            <!--#endregion-->
+
+            <!--#region 侧边栏-->
             <StackPanel
                 Grid.Column="2"
                 MinWidth="250"
                 Margin="5"
                 Orientation="Vertical">
                 <materialDesign:Card Margin="5">
-                    <Grid>
+                    <Grid IsEnabled="{Binding NoLoadingList}">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition />
                             <ColumnDefinition Width="Auto" />
@@ -168,7 +207,14 @@
                             materialDesign:HintAssist.Hint="List"
                             materialDesign:HintAssist.IsFloating="True"
                             ItemsSource="{Binding ListFiles}"
-                            SelectedValue="{Binding SelectedList}" />
+                            SelectedValue="{Binding SelectedList}">
+
+                            <!--<i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding LoadHashListCommand}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>-->
+                        </ComboBox>
                         <Button
                             Grid.Column="1"
                             Margin="5"
@@ -246,7 +292,7 @@
                                 materialDesign:HintAssist.Hint="线程数"
                                 materialDesign:HintAssist.IsFloating="True"
                                 IsEnabled="{Binding MultiThread}"
-                                Text="{Binding ThreadCount}">
+                                Text="{Binding ThreadCount, UpdateSourceTrigger=PropertyChanged}">
                                 <i:Interaction.Behaviors>
                                     <behaviors:MouseWheelBehavior MaxValue="100" MinValue="1" />
                                 </i:Interaction.Behaviors>
@@ -262,7 +308,7 @@
                                 Margin="5"
                                 materialDesign:HintAssist.Hint="输出目录"
                                 materialDesign:HintAssist.IsFloating="True"
-                                Text="{Binding OutputPath}" />
+                                Text="{Binding OutputPath, UpdateSourceTrigger=PropertyChanged}" />
                             <Button
                                 Grid.Column="1"
                                 Margin="5"
@@ -271,10 +317,27 @@
                                 FontFamily="Segoe MDL2 Assets"
                                 ToolTip="浏览" />
                         </Grid>
-                        <StackPanel Orientation="Horizontal" />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Button
+                                Margin="5"
+                                Command="{Binding ParsePakCommand}"
+                                Content="解析" />
+                            <Button
+                                Grid.Column="1"
+                                Margin="5"
+                                Command="{Binding UnpackCommand}"
+                                Content="提取" />
+                        </Grid>
                     </StackPanel>
                 </materialDesign:Card>
             </StackPanel>
+            <!--#endregion-->
+
         </Grid>
         <!--#endregion-->
 

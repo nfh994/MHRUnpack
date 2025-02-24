@@ -22,5 +22,65 @@ namespace MHRUnpack.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string 语言 {
+            get {
+                return ((string)(this["语言"]));
+            }
+            set {
+                this["语言"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool 显示未知 {
+            get {
+                return ((bool)(this["显示未知"]));
+            }
+            set {
+                this["显示未知"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool 多线程 {
+            get {
+                return ((bool)(this["多线程"]));
+            }
+            set {
+                this["多线程"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int 线程数 {
+            get {
+                return ((int)(this["线程数"]));
+            }
+            set {
+                this["线程数"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string 输出目录 {
+            get {
+                return ((string)(this["输出目录"]));
+            }
+            set {
+                this["输出目录"] = value;
+            }
+        }
     }
 }
